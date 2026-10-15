@@ -1,0 +1,15 @@
+{
+  "require": {
+    "slim/slim": "4.*",
+    "slim/psr7": "^1.8",
+    "doctrine/orm": "^3.7",
+    "symfony/cache": "^8.1",
+    "robmorgan/phinx": "^0.16.12",
+    "vlucas/phpdotenv": "^5.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Server\\": "src/"
+    }
+  }
+}

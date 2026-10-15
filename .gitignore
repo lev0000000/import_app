@@ -1,0 +1,22 @@
+# Dependencies
+**/vendor/
+**/node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Uploaded files
+server/public/uploads/
+
+# Build
+client/dist/
+client/.next/
