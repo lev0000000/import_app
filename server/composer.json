@@ -5,11 +5,16 @@
     "doctrine/orm": "^3.7",
     "symfony/cache": "^8.1",
     "robmorgan/phinx": "^0.16.12",
-    "vlucas/phpdotenv": "^5.7"
+    "vlucas/phpdotenv": "^5.7",
+    "php-di/php-di": "^7.1",
+    "tuupola/cors-middleware": "^1.5"
   },
   "autoload": {
     "psr-4": {
       "Server\\": "src/"
     }
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^8.1"
   }
 }

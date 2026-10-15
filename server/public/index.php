@@ -1,18 +1,28 @@
 <?php
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Server\Config\Config;
+use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
+use Tuupola\Middleware\CorsMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
+
+$container = (new ContainerBuilder())->build();
+
+AppFactory::setContainer($container);
 
 $app = AppFactory::create();
 
 
-$app->get('/', function (Request $request, Response $response, $args) {
-    $response->getBody()->write(Config::get('host'));
+(require __DIR__ . '/../src/Routes/api.php')($app);
 
-    return $response;
-});
+$app->addRoutingMiddleware();
+$app->addErrorMiddleware(true, true, true);
+
+$app->add(new CorsMiddleware([
+    'origin' => ['http://localhost:4200'],
+    'methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    'headers.allow' => ['Content-Type', 'Authorization'],
+    'credentials' => false,
+    'cache' => 3600,
+]));
 
 $app->run();
