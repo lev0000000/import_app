@@ -16,11 +16,11 @@ class ImportService
     {
 
         $stream = $file->getStream();
-        $path = $stream->getMetadata('uri');
+        $filePath = ROOT . '/upload/import.xlsx';
 
-        $file->moveTo(ROOT . '/upload/import.xlsx');
+        $file->moveTo($filePath);
 
-        $this->publisher->publish($path);
+        $this->publisher->publish($filePath);
 
         return true;
     }
