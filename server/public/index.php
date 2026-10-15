@@ -3,7 +3,12 @@ use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Tuupola\Middleware\CorsMiddleware;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../src/Config/Config.php';
+require ROOT . '/vendor/autoload.php';
+
+
+
+
 
 $container = (new ContainerBuilder())->build();
 
@@ -12,7 +17,7 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 
-(require __DIR__ . '/../src/Routes/api.php')($app);
+(require ROOT . '/src/Routes/api.php')($app);
 
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);

@@ -1,18 +1,4 @@
 <?php
-namespace Server\Config;
+define('ROOT', dirname(__DIR__, 2));
 
-use Exception;
-
-class Config
-{
-    public static function get(string $key):string{
-        return match ($key) {
-            'host' => getenv('DB_HOST'),
-            'name' => getenv('DB_NAME'),
-            'user' => getenv('DB_USER'),
-            'password' => getenv('DB_PASSWORD'),
-            default =>   throw new Exception("Unknow key:" . $key) 
-        };
-    }
-
-}
+?>

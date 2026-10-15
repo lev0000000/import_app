@@ -17,9 +17,8 @@ class ImportController
         ResponseInterface $response,
     ): ResponseInterface {
 
-        $files = $request->getUploadedFiles();
+        $file = $request->getUploadedFiles()['file'] ?? null;
 
-        $file = $files['file'] ?? null;
 
         if (!$file || $file->getError() !== UPLOAD_ERR_OK) {
             $response->getBody()->write('Ошибка загрузки файла');
@@ -27,7 +26,6 @@ class ImportController
         }
 
         $this->importService->import($file);
-
 
         return $response
             ->withHeader('Content-Type', 'application/json')

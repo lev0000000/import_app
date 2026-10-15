@@ -1,22 +1,27 @@
 <?php
+
 namespace Server\Services;
 
 use Psr\Http\Message\UploadedFileInterface;
+use Server\Queue\Publisher;
 
-class ImportService {
+class ImportService
+{
 
-    public function import(UploadedFileInterface $file) {
+    public function __construct(
+        protected Publisher $publisher
+    ) {}
+
+    public function import(UploadedFileInterface $file)
+    {
 
         $stream = $file->getStream();
         $path = $stream->getMetadata('uri');
 
+        $file->moveTo(ROOT . '/upload/import.xlsx');
 
-        error_log('Имя файла: ' . $file->getClientFilename());
-        error_log('Размер файла: ' . $file->getSize());
-        error_log('Путь: ' . var_export($path, true));
-        error_log($stream);
+        $this->publisher->publish($path);
 
         return true;
     }
-
 }

@@ -16,6 +16,24 @@ services:
     env_file:
       - ./.env
 
+  queue-consumer:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+
+    container_name: slim_queue_consumer
+    working_dir: /var/www/html
+
+    volumes:
+      - ./server:/var/www/html
+
+    command: php bin/import-consumer.php
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./.env
+
   nginx:
     image: nginx:stable-alpine
     container_name: slim_nginx
