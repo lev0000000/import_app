@@ -9,7 +9,8 @@
     "php-di/php-di": "^7.1",
     "tuupola/cors-middleware": "^1.5",
     "php-amqplib/php-amqplib": "^3.7",
-    "phpoffice/phpspreadsheet": "^5.3"
+    "phpoffice/phpspreadsheet": "^5.3",
+    "monolog/monolog": "^3.9"
   },
   "autoload": {
     "psr-4": {
@@ -19,11 +20,16 @@
   "require-dev": {
     "symfony/var-dumper": "^8.1"
   },
-  "repositories": [{
-    "name": "aliyun",
-    "type": "composer",
-    "url": "https://mirrors.aliyun.com/composer/"
-  },{
-    "packagist.org": false
-  }]
+  "repositories": {
+    "aliyun": {
+      "type": "composer",
+      "url": "https://mirrors.aliyun.com/composer/"
+    },
+    "packagist.org": false,
+    "0": {
+      "name": "aliyun",
+      "type": "composer",
+      "url": "https://mirrors.aliyun.com/composer/"
+    }
+  }
 }

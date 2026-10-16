@@ -4,6 +4,8 @@ namespace Server\Queue;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Server\Services\XlsxImportService;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 use Throwable;
 
 class Consumer
@@ -13,6 +15,16 @@ class Consumer
 
     public function run()
     {
+
+        $logger = new Logger('import');
+
+        $logger->pushHandler(
+            new StreamHandler(
+                dirname(__DIR__, 2) . '/logs/import.log',
+                Logger::ERROR
+            )
+        );
+
         $connection = new AMQPStreamConnection(
             'rabbitmq',
             5672,
@@ -31,7 +43,7 @@ class Consumer
             false,
             false,
             false,
-            function ($message) {
+            function ($message) use ($logger) {
                 try {
                     $data = json_decode(
                         $message->getBody(),
@@ -41,8 +53,11 @@ class Consumer
                     $this->xlsx->import($data['file_path']);
                     $message->ack();
                 } catch (Throwable $e) {
-                    echo "Ошибка: {$e->getMessage()}\n";
-                    $message->nack(false, false);
+                    $logger->error('Ошибка импорта XLSX', [
+                        'error' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
                 }
             }
         );
