@@ -6,7 +6,8 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 final readonly class ProductDTO
-{
+{       
+
     public function __construct(
         public string $externalCode,
         public string $name,
@@ -15,6 +16,8 @@ final readonly class ProductDTO
         public float $purchasePrice,
         public array $attributes = [],
         public array $images = [],
+        public int $rowNumber,
+
     ) {}
 
     public function getDiscount(): float

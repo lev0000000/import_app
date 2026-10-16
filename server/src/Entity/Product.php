@@ -42,4 +42,24 @@ class Product
         $this->price = $price;
         $this->discount = $discount;
     }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function setPrice(float $price): void
+    {
+        $this->price = $price;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function setDiscount(float $discount): void
+    {
+        $this->discount = $discount;
+    }
 }

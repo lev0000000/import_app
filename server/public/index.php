@@ -2,15 +2,19 @@
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Tuupola\Middleware\CorsMiddleware;
+use Doctrine\ORM\EntityManagerInterface;
 
 require __DIR__ . '/../src/Config/Config.php';
 require ROOT . '/vendor/autoload.php';
 
 
+$builder = new ContainerBuilder();
 
+$builder->addDefinitions([
+    EntityManagerInterface::class => require ROOT . '/src/Config/Doctrine.php',
+]);
 
-
-$container = (new ContainerBuilder())->build();
+$container = $builder->build();
 
 AppFactory::setContainer($container);
 
