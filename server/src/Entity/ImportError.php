@@ -17,13 +17,12 @@ class ImportError
     #[ORM\JoinColumn(name: 'job_id', referencedColumnName: 'id', nullable: false)]
     private ImportJob $job;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: '`row_number`', type: 'integer')]
     private int $row_number;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $external_code;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(name: '`field`', length: 100)]
     private string $field;
 
     #[ORM\Column(type: 'text')]

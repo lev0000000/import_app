@@ -3,10 +3,11 @@
 namespace Server\Services;
 
 use Psr\Http\Message\UploadedFileInterface;
+use Ramsey\Uuid\Uuid;
 use Server\Entity\ImportJob;
+use Server\Helpers\Log;
 use Server\Queue\Publisher;
 use Server\Repository\ImportJobRepository;
-use Ramsey\Uuid\Uuid;
 
 
 class ImportService
@@ -26,11 +27,7 @@ class ImportService
         $jobId = Uuid::uuid4()->toString();
 
         $file->moveTo($filePath);
-
-        $this->publisher->publish(json_encode([
-            'jobId' => $jobId,
-            'filePath' => $filePath
-        ]));
+        Log::debug('Warn' . $jobId);
 
         $job = new ImportJob(
             id: $jobId,
@@ -39,6 +36,10 @@ class ImportService
 
         $this->jobRepository->save($job);
 
+        $this->publisher->publish([
+            'filePath' => $filePath,
+            'jobId' => $jobId,
+        ]);
 
         return [
             'jobId' => $jobId,

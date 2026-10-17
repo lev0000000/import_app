@@ -55,22 +55,24 @@ class Consumer
                         512
                     );
 
+
                     $jobId = $data['jobId'];
                     $filePath = $data['filePath'];
 
                     $job = $this->jobRepository->findById($jobId);
 
+                    if ($job === null) {
+                        throw new \RuntimeException("ImportJob {$jobId} not found");
+                    }
+
                     $job->setStatus('processing');
                     $this->jobRepository->save($job);
 
-                    $this->xlsx->import($filePath);
+                    $this->xlsx->import($filePath, $job);
 
                     $job->finish();
                     $this->jobRepository->save($job);
 
-                    if ($job === null) {
-                        throw new \RuntimeException("ImportJob {$jobId} not found");
-                    }
                     $message->ack();
                 } catch (Throwable $e) {
                     $logger->error('Ошибка импорта XLSX', [

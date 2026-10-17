@@ -21,8 +21,8 @@ class ImportErrorService
     ): void {
         $error = new ImportError(
             job: $job,
-            rowNumber: $row,
-            externalCode: $externalCode,
+            row_number: $row,
+            external_code: $externalCode,
             field: $field,
             message: $message
         );

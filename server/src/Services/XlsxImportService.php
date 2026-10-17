@@ -34,9 +34,14 @@ class XlsxImportService
 
                 if (str_starts_with($header, 'Доп. поле')) {
                     $key = trim(substr($header, strlen('Доп. поле')));
-
                     $attributeColumns[$letter] = $key;
                 }
+            }
+
+            $directory = dirname(__DIR__, 2) . '/upload/img/'. $job->getId();
+
+            if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+                throw new \RuntimeException('Не удалось создать директорию изображений');
             }
 
             foreach ($sheet->getRowIterator(2) as $row) {
@@ -44,71 +49,48 @@ class XlsxImportService
                 $externalCode = null;
 
                 try {
-                    $externalCode = (string) $sheet->getCell("B$rowIndex")->getValue();
+                    $externalCode = trim(
+                        (string) $sheet->getCell("B$rowIndex")->getValue()
+                    );
 
-                    if (trim($externalCode) === '') {
+                    if ($externalCode === '') {
                         throw new \InvalidArgumentException('Не указан артикул товара');
                     }
 
-                    $image = [];
-
-                if(!is_dir($directory)){
-                    mkdir(dirname(__DIR__, 2) . '/upload/img');
-                }
-
-                array_map(function ($item) use ($directory, &$image) {
-
-                    $img = file_get_contents($item);
-                    $filename = bin2hex(random_bytes(16)) . '.jpg';
-                    $path = $directory . '/' . $filename;
-
-                    file_put_contents($path, $img);
-
-                    array_push($image, [
-                        'url' => $item,
-                        'path' => $path
-                    ]);
-                }, $urls);
-
-
-
-                $products = new ProductDTO(
-                    externalCode: (string) $sheet->getCell("B$rowIndex")->getValue(),
-                    name: (string) $sheet->getCell("E$rowIndex")->getValue(),
-                    description: $sheet->getCell("C$rowIndex")->getValue(),
-                    price: (float) $sheet->getCell("I$rowIndex")->getValue(),
-                    purchasePrice: (float) $sheet->getCell("L$rowIndex")->getValue(),
-                    attributes: array_combine(
-                        array_values($attributeColumns),
+                    $urls = array_filter(
                         array_map(
                             'trim',
                             explode(',', (string) $sheet->getCell("AL$rowIndex")->getValue())
                         )
                     );
 
-                    $directory = dirname(__DIR__, 2) . '/upload/img';
+                    $image = [];
 
                     array_map(function ($item) use ($directory, &$image) {
                         $img = file_get_contents($item);
 
                         if ($img === false) {
-                            throw new \RuntimeException("Не удалось загрузить изображение: {$item}");
+                            throw new \RuntimeException(
+                                "Не удалось загрузить изображение: {$item}"
+                            );
                         }
 
                         $filename = bin2hex(random_bytes(16)) . '.jpg';
                         $path = $directory . '/' . $filename;
 
                         if (file_put_contents($path, $img) === false) {
-                            throw new \RuntimeException("Не удалось сохранить изображение: {$item}");
+                            throw new \RuntimeException(
+                                "Не удалось сохранить изображение: {$item}"
+                            );
                         }
 
-                        array_push($image, [
+                        $image[] = [
                             'url' => $item,
                             'path' => $path
-                        ]);
+                        ];
                     }, $urls);
 
-                    $products = new ProductDTO(
+                    $product = new ProductDTO(
                         externalCode: $externalCode,
                         name: (string) $sheet->getCell("E$rowIndex")->getValue(),
                         description: $sheet->getCell("C$rowIndex")->getValue(),
@@ -125,7 +107,7 @@ class XlsxImportService
                         rowNumber: $rowIndex
                     );
 
-                    $result[$rowIndex] = $products;
+                    $result[$rowIndex] = $product;
 
                 } catch (Throwable $e) {
                     $this->errorService->add(
@@ -141,9 +123,9 @@ class XlsxImportService
             }
         } finally {
             $spreadsheet->disconnectWorksheets();
+            $job->setTotalRows(count($result) + $job->getFailedRows());
         }
 
-        $job->setTotalRows(count($result) + $job->getFailedRows());
 
         if ($result !== []) {
             $this->productService->save($result);
