@@ -22,6 +22,7 @@ class XlsxImportService
         $sheet = $spreadsheet->getActiveSheet();
         $result = [];
 
+        
         try {
             $attributeColumns = [];
 

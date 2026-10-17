@@ -19,7 +19,7 @@ $repositoryError = new ImportErrorRepository($entityManager);
 
 $repositoryJob = new ImportJobRepository($entityManager);
 
-$productService = new ProductService($repository);
+$productService = new ProductService($repository,$entityManager);
 
 $errorService = new ImportErrorService($repositoryError);
 
