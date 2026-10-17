@@ -15,7 +15,7 @@ class ProductImage
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', nullable: false)]
-    
+
     private Product $product;
 
     #[ORM\Column(type: 'string', length: 2048)]
@@ -32,5 +32,19 @@ class ProductImage
         $this->product = $product;
         $this->url = $url;
         $this->path = $path;
+    }
+
+    public function setPath(string $path): void
+    {
+        $this->path = $path;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function getUrl():string{
+        return $this->url;
     }
 }

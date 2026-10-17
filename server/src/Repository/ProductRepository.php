@@ -14,6 +14,13 @@ final class ProductRepository
         private EntityManagerInterface $em,
     ) {}
 
+    public function findByExternalCode(string $externalCode): ?Product
+    {
+        return $this->em->getRepository(Product::class)->findOneBy([
+            'externalCode' => $externalCode
+        ]);
+    }
+
     public function save(Product $product): void
     {
         $this->em->persist($product);
@@ -24,9 +31,31 @@ final class ProductRepository
         $this->em->persist($attribute);
     }
 
+    public function findAttributes(Product $product): array
+    {
+        return $this->em->getRepository(ProductAttribute::class)
+            ->findBy(['product' => $product]);
+    }
+
+    public function removeAttribute(ProductAttribute $attribute): void
+    {
+        $this->em->remove($attribute);
+    }
+
     public function saveImage(ProductImage $image): void
     {
         $this->em->persist($image);
+    }
+
+    public function findImages(Product $product): array
+    {
+        return $this->em->getRepository(ProductImage::class)
+            ->findBy(['product' => $product]);
+    }
+
+    public function removeImage(ProductImage $image): void
+    {
+        $this->em->remove($image);
     }
 
     public function flush(): void

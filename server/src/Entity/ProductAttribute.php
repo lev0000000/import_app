@@ -24,4 +24,19 @@ class ProductAttribute
         #[ORM\Column(name: '`value`', type: 'text')]
         private string $value,
     ) {}
+
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    public function getValue()
+    {
+        return $this->key;
+    }
+
+    public function setValue(string $value)
+    {
+        $this->value = $value;
+    }
 }

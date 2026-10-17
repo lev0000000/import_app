@@ -2,16 +2,20 @@
 
 namespace Server\Queue;
 
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use Server\Services\XlsxImportService;
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Server\Repository\ImportJobRepository;
+use Server\Services\XlsxImportService;
 use Throwable;
 
 class Consumer
 {
 
-    public function __construct(protected XlsxImportService $xlsx) {}
+    public function __construct(
+        protected XlsxImportService $xlsx,
+        private ImportJobRepository $jobRepository
+    ) {}
 
     public function run()
     {
@@ -50,7 +54,23 @@ class Consumer
                         true,
                         512
                     );
-                    $this->xlsx->import($data['file_path']);
+
+                    $jobId = $data['jobId'];
+                    $filePath = $data['filePath'];
+
+                    $job = $this->jobRepository->findById($jobId);
+
+                    $job->setStatus('processing');
+                    $this->jobRepository->save($job);
+
+                    $this->xlsx->import($filePath);
+
+                    $job->finish();
+                    $this->jobRepository->save($job);
+
+                    if ($job === null) {
+                        throw new \RuntimeException("ImportJob {$jobId} not found");
+                    }
                     $message->ack();
                 } catch (Throwable $e) {
                     $logger->error('Ошибка импорта XLSX', [
@@ -58,6 +78,7 @@ class Consumer
                         'file' => $e->getFile(),
                         'line' => $e->getLine(),
                     ]);
+                    $message->nack(false, false);
                 }
             }
         );
