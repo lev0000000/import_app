@@ -25,7 +25,11 @@ class ImportController
             return $response->withStatus(400);
         }
 
-        $this->importService->import($file);
+        $res = $this->importService->import($file);
+
+        $response->getBody()->write(
+            json_encode($res)
+        );
 
         return $response
             ->withHeader('Content-Type', 'application/json')
