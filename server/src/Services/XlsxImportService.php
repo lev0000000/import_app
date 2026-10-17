@@ -49,6 +49,10 @@ class XlsxImportService
 
                 $directory = dirname(__DIR__, 2) . '/upload/img';
 
+                if(!is_dir($directory)){
+                    mkdir(dirname(__DIR__, 2) . '/upload/img');
+                }
+
                 array_map(function ($item) use ($directory, &$image) {
 
                     $img = file_get_contents($item);

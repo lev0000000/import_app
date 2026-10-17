@@ -6,6 +6,7 @@
 .env
 **/.env
 **/.env.local
+**/.env.*.local
 
 # Angular
 **/.angular/
@@ -18,3 +19,8 @@
 
 # Logs
 *.log
+**/logs/
+
+# Uploads
+**/upload/
+

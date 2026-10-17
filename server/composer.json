@@ -25,11 +25,6 @@
       "type": "composer",
       "url": "https://mirrors.aliyun.com/composer/"
     },
-    "packagist.org": false,
-    "0": {
-      "name": "aliyun",
-      "type": "composer",
-      "url": "https://mirrors.aliyun.com/composer/"
-    }
+    "packagist.org": false
   }
 }
