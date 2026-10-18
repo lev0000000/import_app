@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Subscription,
@@ -22,7 +22,7 @@ export class ImportPageStatus {
   private request?: Subscription;
   baseApiUrl = 'http://localhost:8080';
 
-  status = 'pending'  
+  status = signal('pending')
 
   ngOnInit() {
     const jobId = this.route.snapshot.paramMap.get('id');
@@ -31,12 +31,18 @@ export class ImportPageStatus {
       .pipe(
         startWith(0),
         switchMap(() =>
-          this.http.get<{jobId : string}>(`${this.baseApiUrl}/api/import/${jobId}/status`)
+          this.http.get<{ jobId: string }>(`${this.baseApiUrl}/api/import/${jobId}`)
         )
       )
       .subscribe(response => {
-        console.log(response);
-      });
-    }
+        this.status.set(response.jobId)
 
+        console.log(response.jobId)
+
+        if (['completed', 'completed_with_errors', 'failed'].includes(response.jobId)) {
+          this.request?.unsubscribe();
+        }
+      });
   }
+
+}

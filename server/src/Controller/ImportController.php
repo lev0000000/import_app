@@ -2,14 +2,17 @@
 
 namespace Server\Controller;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Server\Helpers\Log;
 use Server\Services\ImportService;
+use Server\Services\StatusService;
 
 class ImportController
 {
     public function __construct(
         private ImportService $importService,
+        private StatusService $statusService
     ) {}
 
     public function upload(
@@ -34,5 +37,21 @@ class ImportController
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
+    }
+
+    public function status(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $id = $args['id'];
+        $result =  $this->statusService->getStatus($id);
+
+        $response->getBody()->write(json_encode([
+            'jobId' => $result
+        ]));
+
+
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

@@ -10,6 +10,8 @@ return function (App $app): void {
 
         $group->post('/import', [ImportController::class, 'upload']);
 
+        $group->get('/import/{id}', [ImportController::class, 'status']);
+
         $group->get('/products', [ProductController::class, 'index']);
 
         $group->get('/products/{id}', [ProductController::class, 'show']);

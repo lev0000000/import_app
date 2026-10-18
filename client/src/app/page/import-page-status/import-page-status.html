@@ -1,1 +1,23 @@
-<p>import-page-status works!</p>
+<div class="max-w-md mx-auto mt-10 p-6 rounded-xl border border-gray-200">
+  <h2 class="text-xl font-semibold mb-4">Импорт товаров</h2>
+
+  <p class="mb-3">Статус: {{ status() }}</p>
+
+  @if (status() === 'pending' || status() === 'processing') {
+    <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div class="h-full w-1/3 bg-blue-500 rounded-full animate-pulse"></div>
+    </div>
+  }
+
+  @if (status() === 'completed') {
+    <p class="text-green-600">Импорт завершён успешно</p>
+  }
+
+  @if (status() === 'completed_with_errors') {
+    <p class="text-yellow-600">Импорт завершён с ошибками</p>
+  }
+
+  @if (status() === 'failed') {
+    <p class="text-red-600">Импорт не удался</p>
+  }
+</div>

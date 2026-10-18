@@ -28,8 +28,9 @@ $app->addErrorMiddleware(true, true, true);
 
 $app->add(new CorsMiddleware([
     'origin' => ['http://localhost:4200'],
-    'methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    'methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     'headers.allow' => ['Content-Type', 'Authorization'],
+    'headers.expose' => [],
     'credentials' => false,
     'cache' => 3600,
 ]));

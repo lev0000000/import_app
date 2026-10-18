@@ -21,4 +21,8 @@ class ImportJobRepository
     {
         return $this->em->find(ImportJob::class, $id);
     }
+
+    public function getStatus(string $id): ?ImportJob {
+        return $this->em->find(ImportJob::class,$id);
+    }
 }
