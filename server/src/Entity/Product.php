@@ -62,4 +62,39 @@ class Product
     {
         $this->discount = $discount;
     }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getExternalCode(): string
+    {
+        return $this->externalCode;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getPrice(): string
+    {
+        return $this->price;
+    }
+
+    public function getDiscount(): string
+    {
+        return $this->discount;
+    }
+
+    public function setExternalCode(string $externalCode): void
+    {
+        $this->externalCode = $externalCode;
+    }
 }

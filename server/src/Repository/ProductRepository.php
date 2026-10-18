@@ -6,7 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Server\Entity\Product;
 use Server\Entity\ProductAttribute;
 use Server\Entity\ProductImage;
-
+use Doctrine\ORM\Tools\Pagination\OffsetPaginator;
+use Doctrine\ORM\Tools\Pagination\Window;
 
 final class ProductRepository
 {
@@ -56,6 +57,65 @@ final class ProductRepository
     public function removeImage(ProductImage $image): void
     {
         $this->em->remove($image);
+    }
+
+    public function paginate(
+        int $page = 1,
+        int $limit = 20,
+        ?string $name = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null
+    ): array {
+        $page = max(1, $page);
+        $limit = min(100, max(1, $limit));
+
+        $qb = $this->em->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p');
+
+        if ($name !== null && $name !== '') {
+            $qb->andWhere('p.name LIKE :name')
+                ->setParameter('name', "%$name%");
+        }
+
+        if ($minPrice !== null) {
+            $qb->andWhere('p.price >= :min')
+                ->setParameter('min', $minPrice);
+        }
+
+        if ($maxPrice !== null) {
+            $qb->andWhere('p.price <= :max')
+                ->setParameter('max', $maxPrice);
+        }
+
+        $qb->orderBy('p.id', 'ASC');
+
+        $result = (new OffsetPaginator())->paginate(
+            $qb->getQuery(),
+            Window::fromPageNumberAndSize($page, $limit)
+        );
+
+        $items = array_map(fn(Product $product) => [
+            'id' => $product->getId(),
+            'external_code' => $product->getExternalCode(),
+            'name' => $product->getName(),
+            'description' => $product->getDescription(),
+            'price' => $product->getPrice(),
+            'discount' => $product->getDiscount(),
+            'images' => array_map(fn(ProductImage $image) => [
+                'id' => $image->getId(),
+                'url' => $image->getUrl(),
+                'path' => $image->getPath(),
+            ], $this->findImages($product)),
+        ], $result->getItems());
+
+        return [
+            'items' => $items,
+            'total' => $result->getTotalCount(),
+            'page' => $page,
+            'limit' => $limit,
+            'totalPages' => (int) ceil($result->getTotalCount() / $limit),
+        ];
     }
 
     public function flush(): void

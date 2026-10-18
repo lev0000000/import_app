@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Container } from '../../shared/container/container';
 import { Form } from '../../shared/form/form';
-import { Import } from '../../data/services/import';
+import { Import } from '../../data/services/import/import';
 import { Router } from '@angular/router';
 
 @Component({

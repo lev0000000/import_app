@@ -34,6 +34,10 @@ class ProductImage
         $this->path = $path;
     }
 
+    public function getId():int {
+        return $this->id;
+    }
+
     public function setPath(string $path): void
     {
         $this->path = $path;

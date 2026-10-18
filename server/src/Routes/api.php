@@ -1,6 +1,7 @@
 <?php
 
 use Server\Controller\ImportController;
+use Server\Controller\ProductController;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
