@@ -1,3 +1,4 @@
+
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ProductsState } from './products.reducer';
 
@@ -17,4 +18,19 @@ export const selectProductsLoading = createSelector(
 export const selectTotalPages = createSelector(
   selectProductsState,
   state => state.totalPages
+);
+
+export const selectProduct = createSelector(
+  selectProductsState,
+  state => state.product
+);
+
+export const selectProductLoading = createSelector(
+  selectProductsState,
+  state => state.productLoading
+);
+
+export const selectProductsError = createSelector(
+  selectProductsState,
+  state => state.error
 );

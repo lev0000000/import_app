@@ -11,10 +11,12 @@ import {
   selectProductsLoading,
   selectTotalPages
 } from '../../store/products/products.selectors';
+import { ProductsFilter } from '../../shared/products-filter/products-filter';
+import { ProductFilters } from '../../models/products-filters';
 
 @Component({
   selector: 'app-products',
-  imports: [AsyncPipe, RouterLink, Container],
+  imports: [AsyncPipe, RouterLink, Container, ProductsFilter],
   templateUrl: './products.html'
 })
 export class Products implements OnInit {
@@ -27,6 +29,12 @@ export class Products implements OnInit {
   page = 1;
   limit = 20;
 
+  filters: ProductFilters = {
+    name: '',
+    minPrice: null,
+    maxPrice: null
+  };
+
   ngOnInit() {
     this.loadProducts();
   }
@@ -34,8 +42,15 @@ export class Products implements OnInit {
   loadProducts() {
     this.store.dispatch(loadProducts({
       page: this.page,
-      limit: this.limit
+      limit: this.limit,
+      filters: this.filters
     }));
+  }
+
+  onFiltersChanged(filters: ProductFilters) {
+    this.filters = filters;
+    this.page = 1;
+    this.loadProducts();
   }
 
   nextPage(totalPages: number) {

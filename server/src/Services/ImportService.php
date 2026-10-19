@@ -22,7 +22,7 @@ class ImportService
     {
 
         $stream = $file->getStream();
-        $filePath = ROOT . '/upload/import.xlsx';
+        $filePath = ROOT . '/uploads/import.xlsx';
 
         $jobId = Uuid::uuid4()->toString();
 
@@ -43,6 +43,7 @@ class ImportService
 
         return [
             'jobId' => $jobId,
+            'filePath' => $filePath,
             'status' => 'pending'
         ];
     }

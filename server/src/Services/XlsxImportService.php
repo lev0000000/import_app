@@ -39,7 +39,7 @@ class XlsxImportService
                 }
             }
 
-            $directory = dirname(__DIR__, 2) . '/upload/img/'. $job->getId();
+            $directory = dirname(__DIR__, 2) . '/uploads/img/'. $job->getId();
 
             if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
                 throw new \RuntimeException('Не удалось создать директорию изображений');
@@ -67,7 +67,7 @@ class XlsxImportService
 
                     $image = [];
 
-                    array_map(function ($item) use ($directory, &$image) {
+                    array_map(function ($item) use ($directory, &$image, $job) {
                         $img = file_get_contents($item);
 
                         if ($img === false) {
@@ -78,6 +78,7 @@ class XlsxImportService
 
                         $filename = bin2hex(random_bytes(16)) . '.jpg';
                         $path = $directory . '/' . $filename;
+                        $publicPath = 'uploads/img/' . $job->getId() . '/' . $filename;
 
                         if (file_put_contents($path, $img) === false) {
                             throw new \RuntimeException(
@@ -87,7 +88,7 @@ class XlsxImportService
 
                         $image[] = [
                             'url' => $item,
-                            'path' => $path
+                            'path' => $publicPath
                         ];
                     }, $urls);
 

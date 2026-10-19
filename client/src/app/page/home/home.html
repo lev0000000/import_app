@@ -1,1 +1,73 @@
-<p>home works!</p>
+
+<app-container>
+  <div class="py-12">
+    <div class="mb-10">
+      <h1 class="mb-3 text-3xl font-semibold text-gray-900">
+        Управление товарами
+      </h1>
+
+      <p class="max-w-2xl text-gray-500">
+        Сервис для импорта товаров из Excel и просмотра каталога.
+        Загружайте XLSX-файлы, отслеживайте обработку и работайте
+        с импортированными товарами.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <a
+        routerLink="/import"
+        class="rounded-xl border border-gray-200 bg-white p-6 transition hover:border-gray-400 hover:shadow-sm cursor-pointer"
+      >
+        <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+          <span class="text-2xl">↑</span>
+        </div>
+
+        <h2 class="mb-2 text-xl font-semibold text-gray-900">
+          Импорт товаров
+        </h2>
+
+        <p class="mb-6 text-sm leading-6 text-gray-500">
+          Загрузите Excel-файл с товарами. После загрузки можно
+          отслеживать статус обработки.
+        </p>
+
+        <span class="text-sm font-medium text-blue-600">
+          Перейти к импорту →
+        </span>
+      </a>
+
+      <a
+        routerLink="/products"
+        class="rounded-xl border border-gray-200 bg-white p-6 transition hover:border-gray-400 hover:shadow-sm cursor-pointer"
+      >
+        <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-gray-100 text-gray-700">
+          <span class="text-2xl">▦</span>
+        </div>
+
+        <h2 class="mb-2 text-xl font-semibold text-gray-900">
+          Каталог товаров
+        </h2>
+
+        <p class="mb-6 text-sm leading-6 text-gray-500">
+          Просматривайте импортированные товары, используйте
+          поиск и фильтры по цене.
+        </p>
+
+        <span class="text-sm font-medium text-blue-600">
+          Открыть каталог →
+        </span>
+      </a>
+    </div>
+
+    <div class="mt-10 rounded-lg border border-gray-200 bg-gray-50 p-5">
+      <h3 class="mb-2 text-sm font-semibold text-gray-800">
+        Как это работает
+      </h3>
+
+      <p class="text-sm leading-6 text-gray-600">
+        Загрузите XLSX-файл → дождитесь завершения обработки →
+        просматривайте товары в каталоге.
+      </p>
+    </div>
+  </div>
+</app-container>

@@ -30,4 +30,30 @@ class ProductController
 
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+    public function show(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $id = (int) $args['id'];
+
+        $product = $this->service->getById($id);
+
+        if (!$product) {
+            $response->getBody()->write(json_encode([
+                'error' => 'Товар не найден'
+            ], JSON_UNESCAPED_UNICODE));
+
+            return $response
+                ->withStatus(404)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
+        $response->getBody()->write(
+            json_encode($product, JSON_UNESCAPED_UNICODE)
+        );
+
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }

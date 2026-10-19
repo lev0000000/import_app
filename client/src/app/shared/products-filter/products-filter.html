@@ -1,0 +1,94 @@
+
+<aside class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+  <h2 class="mb-6 text-xl font-semibold text-gray-900">
+    Фильтры
+  </h2>
+
+  <form (ngSubmit)="applyFilters()" class="space-y-5">
+    <div>
+      <label
+        for="product-search"
+        class="mb-2 block text-sm font-medium text-gray-700"
+      >
+        Поиск товара
+      </label>
+
+      <div class="relative">
+        <input
+          id="product-search"
+          type="search"
+          name="name"
+          placeholder="Введите название..."
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+        />
+      </div>
+    </div>
+
+    <div>
+      <h3 class="mb-3 text-sm font-medium text-gray-700">
+        Цена, ₽
+      </h3>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label
+            for="min-price"
+            class="mb-1 block text-xs text-gray-500"
+          >
+            От
+          </label>
+
+          <input
+            id="min-price"
+            type="number"
+            name="minPrice"
+            min="0"
+            placeholder="0"
+            [ngModel]="minPrice()"
+            (ngModelChange)="minPrice.set($event)"
+            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+
+        <div>
+          <label
+            for="max-price"
+            class="mb-1 block text-xs text-gray-500"
+          >
+            До
+          </label>
+
+          <input
+            id="max-price"
+            type="number"
+            name="maxPrice"
+            min="0"
+            placeholder="100000"
+            [ngModel]="maxPrice()"
+            (ngModelChange)="maxPrice.set($event)"
+            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-2 border-t border-gray-100 pt-5">
+      <button
+        type="submit"
+        class="w-full cursor-pointer rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+      >
+        Применить фильтры
+      </button>
+
+      <button
+        type="button"
+        (click)="resetFilters()"
+        class="w-full cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+      >
+        Сбросить
+      </button>
+    </div>
+  </form>
+</aside>

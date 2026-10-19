@@ -25,4 +25,9 @@ class ProductsListService
             $maxPrice
         );
     }
+
+    public function getById(int $id): ?array
+    {
+        return $this->products->findDetailedById($id);
+    }
 }

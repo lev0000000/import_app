@@ -118,6 +118,47 @@ final class ProductRepository
         ];
     }
 
+
+    public function findDetailedById(int $id): ?array
+    {
+        $product = $this->findById($id);
+
+        if ($product === null) {
+            return null;
+        }
+
+        return [
+            'id' => $product->getId(),
+            'external_code' => $product->getExternalCode(),
+            'name' => $product->getName(),
+            'description' => $product->getDescription(),
+            'price' => (float) $product->getPrice(),
+            'discount' => (float) $product->getDiscount(),
+            'images' => array_map(
+                fn($image) => [
+                    'id' => $image->getId(),
+                    'url' => $image->getUrl(),
+                    'path' => $image->getPath(),
+                ],
+                $this->findImages($product)
+            ),
+            'attributes' => array_map(
+                fn($attribute) => [
+                    'id' => $attribute->getId(),
+                    'key' => $attribute->getKey(),
+                    'value' => $attribute->getValue(),
+                ],
+                $this->findAttributes($product)
+            ),
+        ];
+    }
+
+
+    public function findById(int $id): ?Product
+    {
+        return $this->em->find(Product::class, $id);
+    }
+
     public function flush(): void
     {
         $this->em->flush();

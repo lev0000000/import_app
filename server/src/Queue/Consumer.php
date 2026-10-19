@@ -54,8 +54,7 @@ class Consumer
                         true,
                         512
                     );
-
-
+                    
                     $jobId = $data['jobId'];
                     $filePath = $data['filePath'];
 
@@ -79,6 +78,7 @@ class Consumer
                         'error' => $e->getMessage(),
                         'file' => $e->getFile(),
                         'line' => $e->getLine(),
+                        'path' => $filePath
                     ]);
                     $message->nack(false, false);
                 }
