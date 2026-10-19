@@ -1,94 +1,71 @@
-# Import / Export App
-
-Приложение для асинхронного импорта товаров из XLSX-файлов с возможностью просмотра, поиска и фильтрации товаров.
-
-## Стек технологий
-
-- **Backend:** PHP 8.4, Slim 4, Doctrine ORM, MySQL
-- **Frontend:** Angular, TypeScript, NgRx, Tailwind CSS
-- **Очереди:** RabbitMQ
-- **Инфраструктура:** Docker, Nginx, Taskfile
-- **Документация API:** Swagger / OpenAPI 3
-- **Тестирование:** PHPUnit
-
-## Возможности
-
-- Импорт XLSX через RabbitMQ в фоновом режиме.
-- Отслеживание статуса импорта и ошибок.
-- Сохранение товаров, изображений и характеристик.
-- Обновление товаров при повторном импорте.
-- Каталог с пагинацией, поиском и фильтрацией по цене.
-- Просмотр подробной информации о товаре.
-
 ## Быстрый запуск
 
 ### Требования
 
-Установленные Docker, Docker Compose и [Task](https://taskfile.dev/docs/installation).
+- Docker и Docker Compose
+- [Task (go-task)](https://taskfile.dev/docs/installation)
+- Node.js и npm для Angular
 
-### 1. Клонирование
+### 1. Backend
+
+Клонируйте репозиторий и перейдите в директорию проекта:
 
 ```bash
 git clone <REPOSITORY_URL>
 cd import_app
 ```
 
-### 2. Запуск
+Создайте `.env` из `.env.example` и при необходимости настройте подключение к MySQL и RabbitMQ.
+
+Установите PHP-зависимости, если они ещё не установлены:
+
+```bash
+docker compose run --rm --no-deps php composer install
+```
+
+Запустите развёртывание:
 
 ```bash
 task install
 ```
 
-Команда подготавливает окружение, создаёт директории `uploads`, собирает и запускает Docker-контейнеры, настраивает права записи и выполняет миграции MySQL.
+Команда создаст директории для загрузок, соберёт и запустит Docker-контейнеры, настроит права на запись в `uploads` и выполнит миграции базы данных.
 
-Перед запуском проверьте параметры `.env`, если они отличаются от значений по умолчанию.
+### 2. Frontend
 
-### 3. Проверка
+Откройте второй терминал:
 
-После запуска проверьте доступность frontend, backend и Swagger по портам, указанным в `docker-compose.yml`.
+```bash
+cd client
+npm ci
+npm start -- --host 0.0.0.0
+```
 
-Swagger UI при стандартной конфигурации доступен по адресу:
+### 3. Адреса
 
-http://localhost:8081
+| Сервис | Адрес |
+|---|---|
+| Angular | http://localhost:4200 |
+| Backend API | http://localhost:8080/api/products |
+| Swagger UI | http://localhost:8081 |
+| RabbitMQ Management | http://localhost:15671 |
 
-## Управление проектом
+### 4. Управление
 
 | Команда | Описание |
 |---|---|
-| `task install` | Первоначальная установка |
-| `task up` | Запуск контейнеров |
-| `task down` | Остановка |
-| `task restart` | Перезапуск |
-| `task logs` | Просмотр логов |
-| `task status` | Статус контейнеров |
+| `task install` | Первоначальное развёртывание backend |
+| `task up` | Запуск Docker-сервисов |
+| `task down` | Остановка Docker-сервисов |
+| `task restart` | Перезапуск контейнеров |
 | `task migrate` | Миграции базы данных |
-| `task test` | Unit-тесты |
-| `task permissions` | Права на uploads |
+| `task test` | Unit-тесты PHPUnit |
+| `task logs` | Логи сервисов |
+| `task status` | Состояние контейнеров |
 
-## API
+### Важно
 
-Документация REST API доступна через Swagger UI.
-
-Основные возможности API:
-
-- Получение списка товаров.
-- Получение товара по ID.
-- Загрузка XLSX-файла.
-- Получение статуса и ошибок импорта.
-
-Спецификация находится в `docs/openapi.yaml`.
-
-## Важно при развёртывании
-
-- Директории `server/uploads/imports` и `server/uploads/img` должны быть доступны на запись PHP и обработчику очереди.
-- RabbitMQ consumer должен быть запущен для обработки импорта.
-- Для доступа с другого компьютера используйте IP или домен сервера вместо `localhost`.
-- Данные MySQL должны храниться в постоянном Docker volume.
-
-## Тестирование
-
-```bash
-task test
-```
-
-Тесты написаны на PHPUnit с использованием моков, без подключения к реальной базе данных.
+- PHP и RabbitMQ consumer должны иметь права на запись в `server/uploads`.
+- Для обработки XLSX должен работать контейнер `queue-consumer`.
+- Для доступа с другого ПК замените `localhost` в адресах API на IP или домен сервера и настройте CORS.
+- На Linux для настройки прав через Taskfile необходимы `sudo` и пакет `acl`.
