@@ -75,6 +75,84 @@ paths:
         '404':
           description: Товар не найден
 
+  /import:
+    post:
+      tags:
+        - Import
+      summary: Импорт товаров из XLSX
+      description: Загружает XLSX-файл и создаёт задачу для обработки через RabbitMQ.
+      operationId: uploadImport
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: XLSX-файл с товарами
+      responses:
+        '202':
+          description: Задача импорта создана
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    example: pending
+        '400':
+          description: Некорректный файл
+        '500':
+          description: Ошибка сервера
+
+  /import/{id}/status:
+    get:
+      tags:
+        - Import
+      summary: Получить статус импорта
+      operationId: getImportStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор задачи импорта
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Текущий статус импорта
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - pending
+                      - processing
+                      - completed
+                      - failed
+                  totalRows:
+                    type: integer
+                  successRows:
+                    type: integer
+                  failedRows:
+                    type: integer
+        '404':
+          description: Задача не найдена
+
 components:
   schemas:
     Product:
