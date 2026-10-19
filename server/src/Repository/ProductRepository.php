@@ -9,7 +9,7 @@ use Server\Entity\ProductImage;
 use Doctrine\ORM\Tools\Pagination\OffsetPaginator;
 use Doctrine\ORM\Tools\Pagination\Window;
 
-final class ProductRepository
+class ProductRepository
 {
     public function __construct(
         private EntityManagerInterface $em,
