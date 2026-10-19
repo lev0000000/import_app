@@ -47,18 +47,6 @@ tasks:
     cmds:
       - docker compose restart
 
-  permissions:
-    desc: Настройка прав uploads
-    cmds:
-      - |
-        if command -v setfacl >/dev/null 2>&1; then
-          sudo setfacl -R -m u:33:rwx {{.UPLOADS}}
-          sudo setfacl -R -d -m u:33:rwx {{.UPLOADS}}
-        else
-          echo "setfacl не установлен. Проверьте права на uploads."
-          exit 1
-        fi
-
   wait-db:
     desc: Ожидание MySQL
     cmds:

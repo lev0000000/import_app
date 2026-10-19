@@ -1,4 +1,17 @@
 services:
+
+  init-permissions:
+    image: alpine:3.21
+    user: root
+    volumes:
+      - ./server/uploads:/uploads
+      - ./server/logs:/logs
+    command: >
+      sh -c "mkdir -p /uploads/imports /uploads/img /logs &&
+             chown -R 33:33 /uploads /logs &&
+             chmod -R 775 /uploads /logs"
+    restart: "no"
+
   php:
     build:
       context: .
@@ -16,6 +29,10 @@ services:
     env_file:
       - ./.env
 
+    depends_on:
+      init-permissions:
+        condition: service_completed_successfully
+
   queue-consumer:
     build:
       context: .
@@ -29,10 +46,17 @@ services:
 
     command: php bin/import-consumer.php
     restart: unless-stopped
+
     depends_on:
-      - rabbitmq
+      init-permissions:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
+
     env_file:
       - ./.env
+
+
 
   nginx:
     image: nginx:stable-alpine
