@@ -1,4 +1,5 @@
 <?php
+
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Tuupola\Middleware\CorsMiddleware;
@@ -27,7 +28,10 @@ $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
 $app->add(new CorsMiddleware([
-    'origin' => ['http://localhost:4200'],
+    'origin' => [
+        'http://localhost:4200',
+        'http://localhost:8081',
+    ],
     'methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     'headers.allow' => ['Content-Type', 'Authorization'],
     'headers.expose' => [],

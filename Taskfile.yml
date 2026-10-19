@@ -1,0 +1,113 @@
+
+version: '3'
+
+vars:
+  PHP: php
+  MYSQL: mysql
+  CONSUMER: consumer
+  UPLOADS: server/uploads
+
+tasks:
+  default:
+    desc: Список доступных команд
+    cmds:
+      - task --list
+
+  prepare:
+    desc: Подготовка окружения
+    cmds:
+      - |
+        if [ ! -f .env ] && [ -f .env.example ]; then
+          cp .env.example .env
+        fi
+
+        if [ ! -f server/.env ] && [ -f server/.env.example ]; then
+          cp server/.env.example server/.env
+        fi
+
+        mkdir -p {{.UPLOADS}}/imports {{.UPLOADS}}/img
+
+  build:
+    desc: Сборка Docker-образов
+    cmds:
+      - docker compose build
+
+  up:
+    desc: Запуск приложения
+    cmds:
+      - docker compose up -d --build
+
+  down:
+    desc: Остановка приложения
+    cmds:
+      - docker compose down
+
+  restart:
+    desc: Перезапуск приложения
+    cmds:
+      - docker compose restart
+
+  permissions:
+    desc: Настройка прав uploads
+    cmds:
+      - |
+        if command -v setfacl >/dev/null 2>&1; then
+          sudo setfacl -R -m u:33:rwx {{.UPLOADS}}
+          sudo setfacl -R -d -m u:33:rwx {{.UPLOADS}}
+        else
+          echo "setfacl не установлен. Проверьте права на uploads."
+          exit 1
+        fi
+
+  wait-db:
+    desc: Ожидание MySQL
+    cmds:
+      - |
+        for i in $(seq 1 60); do
+          if docker compose exec -T {{.MYSQL}} mysqladmin ping -h 127.0.0.1 --silent >/dev/null 2>&1; then
+            exit 0
+          fi
+          sleep 2
+        done
+        echo "MySQL недоступен"
+        exit 1
+
+  migrate:
+    desc: Выполнение миграций
+    cmds:
+      - docker compose exec -T {{.PHP}} vendor/bin/phinx migrate
+
+  test:
+    desc: PHPUnit Unit-тесты
+    cmds:
+      - docker compose exec -T {{.PHP}} vendor/bin/phpunit tests/Unit
+
+  logs:
+    desc: Просмотр логов
+    cmds:
+      - docker compose logs -f
+
+  status:
+    desc: Состояние контейнеров
+    cmds:
+      - docker compose ps
+
+  install:
+    desc: Полное развёртывание проекта
+    cmds:
+      - task: prepare
+      - task: up
+      - task: wait-db
+      - task: permissions
+      - task: migrate
+      - task: status
+
+  swagger:
+    desc: Запустить Swagger UI
+    cmds:
+      - docker compose up -d swagger
+
+  swagger-logs:
+    desc: Просмотр логов Swagger
+    cmds:
+      - docker compose logs -f swagger
